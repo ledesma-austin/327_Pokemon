@@ -47,6 +47,7 @@ int main(int argc, char *argv[]){
     // printf("%s", map->map_chars[0][0]->type);
     init_map(&map);
     print_map(&map);
-
+    int a = 0;
+    a++;
     return 0;
 }
