@@ -20,6 +20,52 @@ typedef struct map {
     int N_path_start, S_path_start, E_path_start, W_path_start; 
 } map_t;
 
+// grows each cell left, right, up and down until the screen is filled
+void grow(map_t *map){
+    int i, j, x, y, next_i, next_j;
+    enum cell_type current_symbol;
+    int wasUpdated = 1;
+    // holds 1 if [i][j] cell on map was updated this scan, 0 otherwise
+    int isNew[80][21];
+
+    // scans the map starting from top left to bottom right (excluding borders)
+    // if you come across a cell that isn't empty and that cell wasn't grown this scan, grow it in cardinal directions
+    // continue until nothing grows (board is filled)
+    while(wasUpdated){
+        wasUpdated = 0;
+        // clear isNew
+        for(i = 0; i < 21; i++){
+            for(j = 0; j < 80; j++){
+                isNew[i][j] = 0;
+            }
+        }
+        // scanning loops
+        for(i = 1; i < 20; i++){
+            for(j = 1; j < 79; j++){
+                current_symbol = map->map_chars[i][j].type;
+                if(current_symbol != Empty && !isNew[i][j]){
+                    // only does the cardinal directions
+                    for(x = -1; x < 2; x++){
+                        for(y = -1; y < 2; y++){
+                            // if x + y is not even
+                            if((x + y) % 2){
+                                next_i = i + x;
+                                next_j = j + y;
+                                if(map->map_chars[next_i][next_j].type == Empty){
+                                    map->map_chars[next_i][next_j].type = current_symbol;
+                                    isNew[next_i][next_j] = 1;
+                                    wasUpdated = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
 // places random tiles onto the map
 void rand_seed(map_t *map){
     int i, j, found, rand_type, rand_spot_i, rand_spot_j;
@@ -131,6 +177,8 @@ int main(int argc, char *argv[]){
 
     init_map(&map);
     rand_seed(&map);
+    // print_map(&map);
+    grow(&map);
     print_map(&map);
     
     return 0;
