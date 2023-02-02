@@ -132,7 +132,7 @@ void rand_seed(map_t *map){
             while(found){
                 rand_spot_i = (rand() % 7) + (i * 7);
                 rand_spot_j = (rand() % 20) + (j * 20);
-                if(rand_spot_i != 0 && rand_spot_i != 79 && rand_spot_j != 0 && rand_spot_j != 20){
+                if(rand_spot_i != 0 && rand_spot_i != 20 && rand_spot_j != 0 && rand_spot_j != 79){
                     found = 0;
                 }
             }
@@ -173,6 +173,7 @@ void print_map(map_t *map){
 
 int main(int argc, char *argv[]){
     map_t map;
+
     srand(time(NULL));
 
     init_map(&map);
