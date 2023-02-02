@@ -34,14 +34,14 @@ void grow(map_t *map){
     while(wasUpdated){
         wasUpdated = 0;
         // clear isNew
-        for(i = 0; i < 21; i++){
-            for(j = 0; j < 80; j++){
+        for(i = 0; i < SIZE_X; i++){
+            for(j = 0; j < SIZE_Y; j++){
                 isNew[i][j] = 0;
             }
         }
         // scanning loops
-        for(i = 1; i < 20; i++){
-            for(j = 1; j < 79; j++){
+        for(i = 1; i < SIZE_X - 1; i++){
+            for(j = 1; j < SIZE_Y - 1; j++){
                 current_symbol = map->map_chars[i][j].type;
                 if(current_symbol != Empty && !isNew[i][j]){
                     // only does the cardinal directions
@@ -130,9 +130,9 @@ void rand_seed(map_t *map){
             found = 1;
             // make sure that the random spot isn't on the border
             while(found){
-                rand_spot_i = (rand() % 7) + (i * 7);
-                rand_spot_j = (rand() % 20) + (j * 20);
-                if(rand_spot_i != 0 && rand_spot_i != 20 && rand_spot_j != 0 && rand_spot_j != 79){
+                rand_spot_i = (rand() % (SIZE_X / 3)) + (i * (SIZE_X / 3));
+                rand_spot_j = (rand() % (SIZE_Y / 4)) + (j * (SIZE_Y / 4));
+                if(rand_spot_i != 0 && rand_spot_i != (SIZE_X - 1) && rand_spot_j != 0 && rand_spot_j != (SIZE_Y - 1)){
                     found = 0;
                 }
             }
@@ -178,7 +178,7 @@ int main(int argc, char *argv[]){
 
     init_map(&map);
     rand_seed(&map);
-    // print_map(&map);
+    // print_map(&map)
     grow(&map);
     print_map(&map);
     
