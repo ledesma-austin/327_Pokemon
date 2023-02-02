@@ -20,6 +20,62 @@ typedef struct map {
     int N_path_start, S_path_start, E_path_start, W_path_start; 
 } map_t;
 
+// adds pokemart and pokecenter to the map, making sure they are next to a road
+void add_buildings(map_t *map){
+    int rand_x, rand_y, found, i, j;
+    
+    found = 1;
+    while(found){
+        rand_x = (rand() % 19) + 1;
+        rand_y = (rand() % 78) + 1;
+        // checks surrounding spots for a road
+        for(i = -1; i < 2; i++){
+            for(j = -1; j < 2; j++){
+                if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road){
+                    map->map_chars[rand_x][rand_y].type = PokeMart;
+                    found = 0;
+                }
+            }
+        }
+    }
+    found = 1;
+    while(found){
+        rand_x = (rand() % 19) + 1;
+        rand_y = (rand() % 78) + 1;
+        
+        for(i = -1; i < 2; i++){
+            for(j = -1; j < 2; j++){
+                // also makes sure to not override PokeMart
+                if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road && map->map_chars[rand_x][rand_y].type != PokeMart){
+                    map->map_chars[rand_x][rand_y].type = PokeCenter;
+                    found = 0;
+                }
+            }
+        }
+    }
+}
+
+// gets a random value for N/S and E/W facing roads and makes a straight path across
+void add_straight_road(map_t *map){
+    int N_S_path, E_W_path, i, j;
+
+    N_S_path = (rand() % (SIZE_Y - 10)) + 5;
+    E_W_path = (rand() % (SIZE_X - 5)) + 2;
+    
+    map->N_path_start = N_S_path;
+    map->S_path_start = N_S_path;
+    map->E_path_start = E_W_path;
+    map->W_path_start = E_W_path;
+
+    for(i = 0; i < SIZE_X; i++){
+        map->map_chars[i][N_S_path].type = Road;
+    }
+
+    for(j = 0; j < SIZE_Y; j++){
+        map->map_chars[E_W_path][j].type = Road;
+    }
+}
+
 // grows each cell left, right, up and down until the screen is filled
 void grow(map_t *map){
     int i, j, x, y, next_i, next_j;
@@ -180,6 +236,8 @@ int main(int argc, char *argv[]){
     rand_seed(&map);
     // print_map(&map)
     grow(&map);
+    add_straight_road(&map);
+    add_buildings(&map);
     print_map(&map);
     
     return 0;
