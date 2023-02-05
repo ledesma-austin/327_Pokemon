@@ -3,11 +3,18 @@
 #include <time.h>
 
 // size of map on terminal
-#define SIZE_X 21
-#define SIZE_Y 80
+#define MAP_SIZE_X 21
+#define MAP_SIZE_Y 80
+#define WORLD_SIZE_X 400
+#define WORLD_SIZE_Y 400
 
 enum cell_type{Mountain = '%', Tree = '^', Road = '#', PokeMart = 'M', PokeCenter = 'C',
                     Long_Grass = ':', Clearing = '.', Water = '~', PC = '@', Empty = ' '};
+
+typedef struct node {
+    struct node *prev;
+    int x, y;
+} node_t;
 
 // To hold any info a cell may need
 typedef struct cell {
@@ -16,9 +23,13 @@ typedef struct cell {
 
 // Holds a single map
 typedef struct map {
-    cell_t map_chars[SIZE_X][SIZE_Y];
+    cell_t map_chars[MAP_SIZE_X][MAP_SIZE_Y];
     int N_path_start, S_path_start, E_path_start, W_path_start; 
 } map_t;
+
+typedef struct world {
+    map_t world_maps[WORLD_SIZE_X][WORLD_SIZE_Y];
+} world_t;
 
 // adds pokemart and pokecenter to the map, making sure they are next to a road
 void add_buildings(map_t *map){
@@ -59,19 +70,19 @@ void add_buildings(map_t *map){
 void add_straight_road(map_t *map){
     int N_S_path, E_W_path, i, j;
 
-    N_S_path = (rand() % (SIZE_Y - 10)) + 5;
-    E_W_path = (rand() % (SIZE_X - 5)) + 2;
+    N_S_path = (rand() % (MAP_SIZE_Y - 10)) + 5;
+    E_W_path = (rand() % (MAP_SIZE_X - 5)) + 2;
     
     map->N_path_start = N_S_path;
     map->S_path_start = N_S_path;
     map->E_path_start = E_W_path;
     map->W_path_start = E_W_path;
 
-    for(i = 0; i < SIZE_X; i++){
+    for(i = 0; i < MAP_SIZE_X; i++){
         map->map_chars[i][N_S_path].type = Road;
     }
 
-    for(j = 0; j < SIZE_Y; j++){
+    for(j = 0; j < MAP_SIZE_Y; j++){
         map->map_chars[E_W_path][j].type = Road;
     }
 }
@@ -90,14 +101,14 @@ void grow(map_t *map){
     while(wasUpdated){
         wasUpdated = 0;
         // clear isNew
-        for(i = 0; i < SIZE_X; i++){
-            for(j = 0; j < SIZE_Y; j++){
+        for(i = 0; i < MAP_SIZE_X; i++){
+            for(j = 0; j < MAP_SIZE_Y; j++){
                 isNew[i][j] = 0;
             }
         }
         // scanning loops
-        for(i = 1; i < SIZE_X - 1; i++){
-            for(j = 1; j < SIZE_Y - 1; j++){
+        for(i = 1; i < MAP_SIZE_X - 1; i++){
+            for(j = 1; j < MAP_SIZE_Y - 1; j++){
                 current_symbol = map->map_chars[i][j].type;
                 if(current_symbol != Empty && !isNew[i][j]){
                     // only does the cardinal directions
@@ -186,9 +197,9 @@ void rand_seed(map_t *map){
             found = 1;
             // make sure that the random spot isn't on the border
             while(found){
-                rand_spot_i = (rand() % (SIZE_X / 3)) + (i * (SIZE_X / 3));
-                rand_spot_j = (rand() % (SIZE_Y / 4)) + (j * (SIZE_Y / 4));
-                if(rand_spot_i != 0 && rand_spot_i != (SIZE_X - 1) && rand_spot_j != 0 && rand_spot_j != (SIZE_Y - 1)){
+                rand_spot_i = (rand() % (MAP_SIZE_X / 3)) + (i * (MAP_SIZE_X / 3));
+                rand_spot_j = (rand() % (MAP_SIZE_Y / 4)) + (j * (MAP_SIZE_Y / 4));
+                if(rand_spot_i != 0 && rand_spot_i != (MAP_SIZE_X - 1) && rand_spot_j != 0 && rand_spot_j != (MAP_SIZE_Y - 1)){
                     found = 0;
                 }
             }
@@ -201,11 +212,11 @@ void rand_seed(map_t *map){
 // initializes the starting map with borders
 void init_map(map_t *map){
     int i, j;
-    for(i = 0; i < SIZE_X; i++){
-        for(j = 0 ; j < SIZE_Y; j++){
+    for(i = 0; i < MAP_SIZE_X; i++){
+        for(j = 0 ; j < MAP_SIZE_Y; j++){
             // if current cell is on the edge, make it a mountain
             // Mountain and Empty are enum cell_type
-            if(!i || !j || i == SIZE_X - 1 || j == SIZE_Y - 1){
+            if(!i || !j || i == MAP_SIZE_X - 1 || j == MAP_SIZE_Y - 1){
                 map->map_chars[i][j].type = Mountain;
             }
             else{
@@ -219,8 +230,8 @@ void init_map(map_t *map){
 void print_map(map_t *map){
     int i, j;
 
-    for(i = 0; i < SIZE_X; i++){
-        for(j = 0 ; j < SIZE_Y; j++){
+    for(i = 0; i < MAP_SIZE_X; i++){
+        for(j = 0 ; j < MAP_SIZE_Y; j++){
             printf("%c", map->map_chars[i][j].type);
         }
         printf("\n");
