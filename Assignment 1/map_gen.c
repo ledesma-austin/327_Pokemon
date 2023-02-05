@@ -25,6 +25,7 @@ typedef struct cell {
 typedef struct map {
     cell_t map_chars[MAP_SIZE_X][MAP_SIZE_Y];
     int N_path_start, S_path_start, E_path_start, W_path_start; 
+    int world_x, world_y;
 } map_t;
 
 // Holds the world map
@@ -38,7 +39,7 @@ typedef struct world {
 } world_t;
 
 // adds pokemart and pokecenter to the map, making sure they are next to a road
-void add_buildings(map_t *map){
+void add_buildings(world_t *world, map_t *map){
     int rand_x, rand_y, found, i, j;
     
     found = 1;
@@ -83,18 +84,18 @@ void add_buildings(map_t *map){
 // }
 
 // gets a random value for N/S and E/W facing roads and makes a straight path across
-void add_straight_road(world_t *world, map_t *map, int world_x, int world_y){
+void add_straight_road(world_t *world, map_t *map){
     int N_S_path, E_W_path, i, j;
 
     // if map exists in world on this x level, set E_W_path to that x level, 
     // otherwise, set random level
-    if(!(E_W_path = world->x_road_level[world_x])){
+    if(!(E_W_path = world->x_road_level[map->world_x])){
         E_W_path = (rand() % (MAP_SIZE_X - 5)) + 2;
-        world->x_road_level[world_x] = E_W_path;
+        world->x_road_level[map->world_x] = E_W_path;
     }
-    if(!(N_S_path = world->y_road_level[world_y])){
+    if(!(N_S_path = world->y_road_level[map->world_y])){
         N_S_path = (rand() % (MAP_SIZE_Y - 10)) + 5;
-        world->y_road_level[world_y] = N_S_path;
+        world->y_road_level[map->world_y] = N_S_path;
     }
     
     
@@ -111,10 +112,11 @@ void add_straight_road(world_t *world, map_t *map, int world_x, int world_y){
     for(j = 0; j < MAP_SIZE_Y; j++){
         map->map_chars[E_W_path][j].type = Road;
     }
+    add_buildings(world, map);
 }
 
 // grows each cell left, right, up and down until the screen is filled
-void grow(map_t *map){
+void grow(world_t *world, map_t *map){
     int i, j, x, y, next_i, next_j;
     enum cell_type current_symbol;
     int wasUpdated = 1;
@@ -156,11 +158,11 @@ void grow(map_t *map){
             }
         }
     }
-    
+    add_straight_road(world, map);
 }
 
 // places random tiles onto the map
-void rand_seed(map_t *map){
+void rand_seed(world_t *world, map_t *map){
     int i, j, found, rand_type, rand_spot_i, rand_spot_j;
     enum cell_type seed_list[12] = {Empty, Empty, Empty, Empty, Empty, Empty, 
                                 Empty, Empty, Empty, Empty, Empty, Empty};
@@ -232,13 +234,15 @@ void rand_seed(map_t *map){
             map->map_chars[rand_spot_i][rand_spot_j].type = seed_list[i + j];
         }
     }
-
+    grow(world, map);
 }
 
 // initializes the starting map with borders
 void init_map(world_t *world, map_t *map, int x, int y){
     int i, j;
     world->world_maps[x][y] = malloc(sizeof *map);
+    map->world_x = x;
+    map->world_y = y;
     for(i = 0; i < MAP_SIZE_X; i++){
         for(j = 0 ; j < MAP_SIZE_Y; j++){
             // if current cell is on the edge, make it a mountain
@@ -251,6 +255,7 @@ void init_map(world_t *world, map_t *map, int x, int y){
             }
         }
     }
+    rand_seed(world, map);
 }
 
 // prints map using enum cell_type values 
@@ -274,11 +279,6 @@ int main(int argc, char *argv[]){
     srand(time(NULL));
 
     init_map(&world, &map, x, y);
-    rand_seed(&map);
-    // print_map(&map)
-    grow(&map);
-    add_straight_road(&world, &map, x, y);
-    add_buildings(&map);
     print_map(&map);
     
     return 0;
