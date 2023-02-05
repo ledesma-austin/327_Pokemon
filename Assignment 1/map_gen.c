@@ -27,8 +27,14 @@ typedef struct map {
     int N_path_start, S_path_start, E_path_start, W_path_start; 
 } map_t;
 
+// Holds the world map
 typedef struct world {
-    map_t world_maps[WORLD_SIZE_X][WORLD_SIZE_Y];
+    map_t *world_maps[WORLD_SIZE_X][WORLD_SIZE_Y];
+    // Because roads are currently straight, they will be a straight line throughout the world
+    // This array holds the x value for each of the east/west road levels
+    int x_road_level[WORLD_SIZE_X];
+    // holds y value for for each of the north/south road levels
+    int y_road_level[WORLD_SIZE_Y];
 } world_t;
 
 // adds pokemart and pokecenter to the map, making sure they are next to a road
@@ -66,12 +72,32 @@ void add_buildings(map_t *map){
     }
 }
 
+// node_t* DFS(map_t *map, node_t *source, node_t *dest){
+    
+// }
+
+// void add_curved_roads(map_t *map){
+//     int rand_N_S_spot, rand_E_W_spot;
+
+
+// }
+
 // gets a random value for N/S and E/W facing roads and makes a straight path across
-void add_straight_road(map_t *map){
+void add_straight_road(world_t *world, map_t *map, int world_x, int world_y){
     int N_S_path, E_W_path, i, j;
 
-    N_S_path = (rand() % (MAP_SIZE_Y - 10)) + 5;
-    E_W_path = (rand() % (MAP_SIZE_X - 5)) + 2;
+    // if map exists in world on this x level, set E_W_path to that x level, 
+    // otherwise, set random level
+    if(!(E_W_path = world->x_road_level[world_x])){
+        E_W_path = (rand() % (MAP_SIZE_X - 5)) + 2;
+        world->x_road_level[world_x] = E_W_path;
+    }
+    if(!(N_S_path = world->y_road_level[world_y])){
+        N_S_path = (rand() % (MAP_SIZE_Y - 10)) + 5;
+        world->y_road_level[world_y] = N_S_path;
+    }
+    
+    
     
     map->N_path_start = N_S_path;
     map->S_path_start = N_S_path;
@@ -210,8 +236,9 @@ void rand_seed(map_t *map){
 }
 
 // initializes the starting map with borders
-void init_map(map_t *map){
+void init_map(world_t *world, map_t *map, int x, int y){
     int i, j;
+    world->world_maps[x][y] = malloc(sizeof *map);
     for(i = 0; i < MAP_SIZE_X; i++){
         for(j = 0 ; j < MAP_SIZE_Y; j++){
             // if current cell is on the edge, make it a mountain
@@ -240,14 +267,17 @@ void print_map(map_t *map){
 
 int main(int argc, char *argv[]){
     map_t map;
+    world_t world;
+    int x, y;
+    x = y = 0;
 
     srand(time(NULL));
 
-    init_map(&map);
+    init_map(&world, &map, x, y);
     rand_seed(&map);
     // print_map(&map)
     grow(&map);
-    add_straight_road(&map);
+    add_straight_road(&world, &map, x, y);
     add_buildings(&map);
     print_map(&map);
     
