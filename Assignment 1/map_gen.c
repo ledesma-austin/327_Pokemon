@@ -1,4 +1,4 @@
-#include <stdio.h> //includes printf
+#include <stdio.h> //includes printf, scanf
 #include <stdlib.h> // includes malloc, srand
 #include <time.h>
 
@@ -258,6 +258,17 @@ void init_map(world_t *world, map_t *map, int x, int y){
     rand_seed(world, map);
 }
 
+// frees all memory allocated for the world
+void destroy(world_t *world){
+    int i, j;
+    
+    for(i = 0; i < WORLD_SIZE_X; i++){
+        for(j = 0; j < WORLD_SIZE_Y; j++){
+            free(world->world_maps[i][j]);
+        }
+    }
+}
+
 // prints map using enum cell_type values 
 void print_map(map_t *map){
     int i, j;
@@ -275,6 +286,7 @@ int main(int argc, char *argv[]){
     world_t world;
     int x, y;
     x = y = 0;
+    
 
     srand(time(NULL));
 
