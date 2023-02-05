@@ -5,8 +5,8 @@
 // size of map on terminal
 #define MAP_SIZE_X 21
 #define MAP_SIZE_Y 80
-#define WORLD_SIZE_X 400
-#define WORLD_SIZE_Y 400
+#define WORLD_SIZE_X 401
+#define WORLD_SIZE_Y 401
 
 enum cell_type{Mountain = '%', Tree = '^', Road = '#', PokeMart = 'M', PokeCenter = 'C',
                     Long_Grass = ':', Clearing = '.', Water = '~', PC = '@', Empty = ' '};
