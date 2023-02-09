@@ -1,6 +1,8 @@
-#include <stdio.h> //includes printf, scanf
-#include <stdlib.h> // includes malloc, srand
+#include <stdio.h> //includes printf, scanf, fgets
+#include <stdlib.h> // includes malloc, srand, abs
+#include <string.h> //includes strcmp, memset
 #include <time.h>
+#include <math.h> // includes round
 
 // size of map on terminal
 #define MAP_SIZE_X 21
@@ -41,32 +43,50 @@ typedef struct world {
 // adds pokemart and pokecenter to the map, making sure they are next to a road
 void add_buildings(world_t *world, map_t *map){
     int rand_x, rand_y, found, i, j;
+    double d, chance, random;
     
-    found = 1;
-    while(found){
-        rand_x = (rand() % 19) + 1;
-        rand_y = (rand() % 78) + 1;
-        // checks surrounding spots for a road
-        for(i = -1; i < 2; i++){
-            for(j = -1; j < 2; j++){
-                if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road){
-                    map->map_chars[rand_x][rand_y].type = PokeMart;
-                    found = 0;
+    // d is manhatten distance
+    d = abs(map->world_x - 200) + abs(map->world_y - 200);
+    // a gradual decrease from 50% down to 5% based on distance, then a flat 5%
+    if(d > 200){
+        chance = 5;
+    }
+    else{
+        chance = round((-45 * d) / 200 + 50);
+    }
+
+    
+    random = (rand() % 100);
+    if(random <= chance){
+        found = 1;
+        while(found){
+            rand_x = (rand() % 19) + 1;
+            rand_y = (rand() % 78) + 1;
+            // checks surrounding spots for a road
+            for(i = -1; i < 2; i++){
+                for(j = -1; j < 2; j++){
+                    if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road){
+                        map->map_chars[rand_x][rand_y].type = PokeMart;
+                        found = 0;
+                    }
                 }
             }
         }
     }
-    found = 1;
-    while(found){
-        rand_x = (rand() % 19) + 1;
-        rand_y = (rand() % 78) + 1;
-        
-        for(i = -1; i < 2; i++){
-            for(j = -1; j < 2; j++){
-                // also makes sure to not override PokeMart
-                if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road && map->map_chars[rand_x][rand_y].type != PokeMart){
-                    map->map_chars[rand_x][rand_y].type = PokeCenter;
-                    found = 0;
+    random = rand() % 100;
+    if(random <= chance){
+        found = 1;
+        while(found){
+            rand_x = (rand() % 19) + 1;
+            rand_y = (rand() % 78) + 1;
+            
+            for(i = -1; i < 2; i++){
+                for(j = -1; j < 2; j++){
+                    // also makes sure to not override PokeMart
+                    if(j != 0 && i != 0 && map->map_chars[rand_x + i][rand_y + j].type == Road && map->map_chars[rand_x][rand_y].type != PokeMart){
+                        map->map_chars[rand_x][rand_y].type = PokeCenter;
+                        found = 0;
+                    }
                 }
             }
         }
@@ -98,8 +118,6 @@ void add_straight_road(world_t *world, map_t *map){
         world->y_road_level[map->world_y] = N_S_path;
     }
     
-    
-    
     map->N_path_start = N_S_path;
     map->S_path_start = N_S_path;
     map->E_path_start = E_W_path;
@@ -112,6 +130,27 @@ void add_straight_road(world_t *world, map_t *map){
     for(j = 0; j < MAP_SIZE_Y; j++){
         map->map_chars[E_W_path][j].type = Road;
     }
+
+    // check if map is at the top or bottom edge of border, if so, make top/bottom path a mountain
+    switch(map->world_x){
+        case(0):
+            map->map_chars[0][N_S_path].type = Mountain;
+            break;
+        case(WORLD_SIZE_X - 1):
+            map->map_chars[MAP_SIZE_X - 1][N_S_path].type = Mountain;
+            break;
+    }
+
+    switch(map->world_y){
+        case(0):
+            map->map_chars[E_W_path][0].type = Mountain;
+            break;
+        case(WORLD_SIZE_Y - 1):
+            map->map_chars[E_W_path][MAP_SIZE_Y - 1].type = Mountain;
+            break;
+    }
+
+
     add_buildings(world, map);
 }
 
@@ -238,9 +277,12 @@ void rand_seed(world_t *world, map_t *map){
 }
 
 // initializes the starting map with borders
-void init_map(world_t *world, map_t *map, int x, int y){
+void init_map(world_t *world, int x, int y){
     int i, j;
+    map_t *map;
+
     world->world_maps[x][y] = malloc(sizeof *map);
+    map = world->world_maps[x][y];
     map->world_x = x;
     map->world_y = y;
     for(i = 0; i < MAP_SIZE_X; i++){
@@ -255,7 +297,7 @@ void init_map(world_t *world, map_t *map, int x, int y){
             }
         }
     }
-    rand_seed(world, map);
+    rand_seed(world, world->world_maps[x][y]);
 }
 
 // frees all memory allocated for the world
@@ -264,7 +306,9 @@ void destroy(world_t *world){
     
     for(i = 0; i < WORLD_SIZE_X; i++){
         for(j = 0; j < WORLD_SIZE_Y; j++){
-            free(world->world_maps[i][j]);
+            if(world->world_maps[i][j] != NULL){
+                free(world->world_maps[i][j]);
+            }
         }
     }
 }
@@ -282,16 +326,75 @@ void print_map(map_t *map){
 }
 
 int main(int argc, char *argv[]){
-    map_t map;
     world_t world;
-    int x, y;
-    x = y = 0;
-    
+    int x, y, flyX, flyY;
+    char input[10];
+    // char output_text[2][80];
+    x = y = 200;
 
     srand(time(NULL));
 
-    init_map(&world, &map, x, y);
-    print_map(&map);
-    
+    // sets all arrays and pointer arrays to 0;
+    memset(world.world_maps, 0, sizeof world.world_maps);
+    memset(world.x_road_level, 0, sizeof world.x_road_level);
+    memset(world.y_road_level, 0, sizeof world.y_road_level);
+
+    init_map(&world, x, y);
+    print_map(world.world_maps[x][y]);
+    printf("Enter n, s, e, w to move, f <x> <y> to fly, or q to quit: ");
+    scanf("%c", input);
+
+    while(1){
+        // memset(output_text[0], 0, sizeof output_text[0]);
+        // output_text[2] = "Enter n, s, e, w to move, f <x> <y> to fly, or q to quit: "; 
+        switch(input[0]){
+            case 'n':
+                if(x > 0){
+                    x -= 1;
+                }
+                break;
+            case 's':
+                if(x < 400){
+                    x += 1;
+                }
+                break;
+            case 'e':
+                if(y < 400){
+                    y += 1;
+                }
+                break;
+            case 'w':
+                if(y > 0){
+                    y -= 1;
+                }
+                break;
+            case 'f':
+                scanf(" %d %d", &flyX, &flyY);
+                if(flyX < -200 || flyX > 200 || flyY < -200 || flyY > 200){
+                    // output_text[0] = "Out of Bounds error. <x> <y> must be less than 200 and greater than -200. ");
+                }
+                else{
+                    // x and y are flipped in program vs user input, also add 200 so -200, -200 == array[0][0];
+                    x = flyY + 200;
+                    y = flyX + 200;
+                }
+                break;
+            case 'q':
+                goto end;
+            default:
+                // strcpy(temp, "Unknown command. ");
+                // output_text = strcat(output_text, temp);
+                break;
+        }
+        if(!world.world_maps[x][y]){
+            init_map(&world, x, y);
+        }
+        print_map(world.world_maps[x][y]);
+        // printf("%s\n", output_text);
+        printf("Enter n, s, e, w to move, f <x> <y> to fly, or q to quit: ");
+        scanf(" %c", input);
+    }
+    end:
+    destroy(&world);
     return 0;
 }
