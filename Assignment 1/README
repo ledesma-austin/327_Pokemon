@@ -1,5 +1,6 @@
 Generates random maps and paths. Allows user input to move around the world in each cardinal direction or by flying using f <x> <y>
 Generates a new random map with connecting paths every time they move.
 PokeCenters and PokeMarts are less likely to spawn the farther you get from the starting map.
+Any errors/invalid commands will just reload the current map.
 
 Use "make" to compile the c file, then "./map_gen" to run the program.
