@@ -23,14 +23,14 @@ void *heap_peek_min(heap_peek_min153,2895
 static void heap_link(158,2971
 static void heap_consolidate(172,3293
 void *heap_remove_min(heap_remove_min213,4226
-int heap_combine(248,4760
-static void heap_cut(277,5411
-static void heap_cascading_cut(291,5692
-int heap_decrease_key(305,5918
-int heap_decrease_key_no_replace(319,6160
-int32_t compare(343,6734
-char *print_int(print_int348,6833
-int main(357,6951
+int heap_combine(255,4893
+static void heap_cut(284,5544
+static void heap_cascading_cut(298,5825
+int heap_decrease_key(312,6051
+int heap_decrease_key_no_replace(326,6293
+int32_t compare(350,6867
+char *print_int(print_int355,6966
+int main(364,7084
 
 heap.h,245
 # define HEAP_H2,15
@@ -42,7 +42,45 @@ typedef struct heap 13,153
   void (*datum_delete)datum_delete17,269
 } heap_t;18,301
 
-poke327.c,1793
+path_finding.c,906
+typedef enum __attribute__ ((__packed__)) terrain_type 3,19
+  ter_boulder,4,76
+  ter_tree,5,91
+  ter_path,6,103
+  ter_mart,7,115
+  ter_center,8,127
+  ter_grass,9,141
+  ter_clearing,10,154
+  ter_mountain,11,170
+  ter_forest,12,186
+  ter_water,13,200
+  ter_gate,14,213
+  num_terrain_types15,225
+} terrain_type_t;16,245
+typedef enum character_type 18,264
+  char_pc,19,294
+  char_hiker,20,305
+  char_rival,21,319
+  num_character_types22,333
+} character_type_t;23,355
+typedef struct path 25,376
+  heap_node_t *hn;hn26,398
+  int32_t cost;27,417
+} path_t;28,433
+typedef struct map 30,444
+  terrain_type_t map[map31,465
+  uint8_t height[height32,501
+  uint8_t n,33,533
+  uint8_t n, s,33,533
+  uint8_t n, s, e,33,533
+  uint8_t n, s, e, w;33,533
+} map_t;34,555
+static int32_t path_cmp(36,565
+int move_costs[move_costs40,688
+static void dijkstra_path(47,1185
+int main(152,5141
+
+poke327.c,2279
 #define malloc(14,226
 typedef struct path 20,370
   heap_node_t *hn;hn21,392
@@ -67,44 +105,60 @@ typedef uint8_t pair_t[pair_t33,533
 #define heightpair(44,841
 #define heightxy(45,904
 typedef enum __attribute__ ((__packed__)) terrain_type 47,946
-  ter_debug,48,1003
-  ter_boulder,49,1016
-  ter_tree,50,1031
-  ter_path,51,1043
-  ter_mart,52,1055
-  ter_center,53,1067
-  ter_grass,54,1081
-  ter_clearing,55,1094
-  ter_mountain,56,1110
-  ter_forest,57,1126
-  ter_water58,1140
-} terrain_type_t;59,1152
-typedef struct map 61,1171
-  terrain_type_t map[map62,1192
-  uint8_t height[height63,1228
-  uint8_t n,64,1260
-  uint8_t n, s,64,1260
-  uint8_t n, s, e,64,1260
-  uint8_t n, s, e, w;64,1260
-} map_t;65,1282
-typedef struct queue_node 67,1292
-  int x,68,1320
-  int x, y;68,1320
-  struct queue_node *next;next69,1332
-} queue_node_t;70,1359
-static int32_t path_cmp(72,1376
-static int32_t edge_penalty(76,1499
-static void dijkstra_path(81,1627
-static int build_paths(179,5413
-static int gaussian[gaussian200,5719
-static int smooth_height(207,5881
-static void find_building_location(364,9916
-static int place_pokemart(395,11402
-static int place_center(409,11694
-static terrain_type_t border_type(424,12146
-static int map_terrain(468,13076
-static int place_boulders(643,17514
-static int place_trees(659,17838
-static int new_map(677,18203
-static void print_map(692,18517
-int main(739,19403
+  ter_boulder,49,1019
+  ter_tree,50,1034
+  ter_path,51,1046
+  ter_mart,52,1058
+  ter_center,53,1070
+  ter_grass,54,1084
+  ter_clearing,55,1097
+  ter_mountain,56,1113
+  ter_forest,57,1129
+  ter_water,58,1143
+  ter_gate,59,1156
+  num_terrain_types60,1168
+} terrain_type_t;61,1188
+typedef struct map 63,1207
+  terrain_type_t map[map64,1228
+  uint8_t height[height65,1264
+  uint8_t n,66,1296
+  uint8_t n, s,66,1296
+  uint8_t n, s, e,66,1296
+  uint8_t n, s, e, w;66,1296
+} map_t;67,1318
+typedef struct queue_node 69,1328
+  int x,70,1356
+  int x, y;70,1356
+  struct queue_node *next;next71,1368
+} queue_node_t;72,1395
+typedef enum character_type 74,1412
+  char_pc,75,1442
+  char_hiker,76,1453
+  char_rival,77,1467
+  num_character_types78,1481
+} character_type_t;79,1503
+typedef struct cost_map 81,1524
+  character_type_t character;82,1550
+  int costs[costs83,1580
+} cost_map_t;84,1601
+static int move_costs[move_costs86,1616
+static int32_t path_cmp(93,2120
+static int32_t edge_penalty(97,2243
+static int getCost(102,2371
+static void dijkstra_map_cost(106,2479
+static void dijkstra_path(226,7540
+static int build_paths(324,11326
+static int gaussian[gaussian345,11632
+static int smooth_height(352,11794
+static void find_building_location(509,15829
+static int place_pokemart(540,17315
+static int place_center(554,17607
+static terrain_type_t border_type(569,18059
+static int map_terrain(613,18989
+static int place_boulders(788,23427
+static int place_trees(804,23751
+static int new_map(822,24116
+static void print_map(837,24430
+void print_distance_map(889,25420
+void place_player(904,25682
+int main(917,25892
