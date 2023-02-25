@@ -1,0 +1,7 @@
+Should generate a cost map for both the rival and hiker. 
+Ran into a bug that I spent hours on and couldn't figure out where Shaeffers code where it will randomly fail with double free or corruption (fasttop).
+Backtraced it to line 237 in heap.c, function heap_remove_min, where it runs free(n).
+I do not know why this errors out as I used Shaeffers dijkstra, which doesn't malloc or free anything outside of heap.c and I didn't change any part with the heap.
+Use make to compile, then ./poke327 to run. It will error with:
+double free or corruption (fasttop)
+Aborted (core dumped)

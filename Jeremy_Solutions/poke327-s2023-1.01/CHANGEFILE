@@ -1,0 +1,107 @@
+commit bbca3851abd1290c5f98d91ff1765b4a1ddcfd3a
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 22 19:51:35 2023 -0600
+
+    Lots of debugging, should work, but doesn't
+
+commit 392414301c49b99711f929cd23bea31a85b5217f
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Tue Feb 21 11:39:42 2023 -0600
+
+    Switched over to Jeremy's Solution, changed dijkstra
+
+commit 4e2c87017ed12cb904a47c6ff9d46b2bb7a7937f
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 8 20:42:24 2023 -0600
+
+    README Update
+
+commit 8409300e7fd1e1c3b1e2f50c830e72804c775299
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 8 20:39:07 2023 -0600
+
+    Updated README
+
+commit 0b09885e9f7ec48b868873d62ed6817ab936a02e
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 8 20:32:52 2023 -0600
+
+    Added movement and decreasing PM and PC
+
+commit 49436b99deb00b6eb8179f59390f474a37c426ce
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Sun Feb 5 10:34:33 2023 -0600
+
+    Added Destroy method to free world maps
+
+commit 5e57dbc4fb51b861a007cb747588d8c24b4907d4
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Sun Feb 5 10:25:48 2023 -0600
+
+    Reformatted methods, map generation now from one call
+
+commit c40a1ae0c86f46a428e6593dbc022ae6d1dab9d3
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Sun Feb 5 10:05:14 2023 -0600
+
+    Fixed incorrect world size
+
+commit 72f811b9a31f99cba3a0886f3b7206931311e2ba
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Sun Feb 5 09:34:30 2023 -0600
+
+    Added way to make roads line up across the world
+
+commit e97746f32868bec63677dd8658def3f43e735da9
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Sun Feb 5 08:01:39 2023 -0600
+
+    Renamed size variables and created world struct
+
+commit 8173541aebdd1d5b527071cc60169546dc496aee
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 1 22:46:20 2023 -0600
+
+    Added PokeMart and PokeCenter generation
+
+commit 4deda9a3fbca9052990487306f7aa73d7f2cb79e
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 1 22:04:40 2023 -0600
+
+    Changed variables to use SIZE_X and SIZE_Y
+
+commit 42099a0a35aa4e0195107d79a1584064b31028e5
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 1 21:55:37 2023 -0600
+
+    Fixed error with allowing seeds to spawn on border
+
+commit 53ebc013bf3d45a50077aa1e96b04b64221dfe20
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 1 18:30:21 2023 -0600
+
+    Added grow function to fill the board
+
+commit cc4e5810a50e9eba55256fa67c8d1895d1feaea3
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Wed Feb 1 16:32:00 2023 -0600
+
+    Seeds map with random types following requirements
+
+commit 091aef29f56e0b5f2a3fdfa1549862a81a0f3b33
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Tue Jan 31 12:34:08 2023 -0600
+
+    Changed cell types to enum vals and added comments
+
+commit 821fdd90e42abe82095dca81cf60bae99a3384f4
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Tue Jan 31 12:10:56 2023 -0600
+
+    test
+
+commit 944f83bba65c29dd5501c9f976e73cade05dc2a0
+Author: Austin Ledesma <ledesma@iastate.edu>
+Date:   Tue Jan 31 11:30:51 2023 -0600
+
+    init_map and print_map now prints map with border
